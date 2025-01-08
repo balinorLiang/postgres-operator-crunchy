@@ -66,7 +66,7 @@ jobs:
           prefetch-images: |
             registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:ubi8-2.51-1
             registry.developers.crunchydata.com/crunchydata/crunchy-pgbouncer:ubi8-1.22-1
-            registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-1
+            registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-0
 
       - run: make createnamespaces check-envtest-existing
         env:
@@ -88,7 +88,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kubernetes: [v1.23]
+        kubernetes: [v1.30,v1.23]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -136,7 +136,7 @@ jobs:
             --env 'RELATED_IMAGE_PGUPGRADE=registry.developers.crunchydata.com/crunchydata/crunchy-upgrade:latest' \
             --env 'RELATED_IMAGE_POSTGRES_15=registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-15.7-1' \
             --env 'RELATED_IMAGE_POSTGRES_15_GIS_3.3=registry.developers.crunchydata.com/crunchydata/crunchy-postgres-gis:ubi8-15.7-3.3-1' \
-            --env 'RELATED_IMAGE_POSTGRES_14=registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-1' \
+            --env 'RELATED_IMAGE_POSTGRES_14=registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-0' \
             --env 'RELATED_IMAGE_POSTGRES_14_GIS_3.2=registry.developers.crunchydata.com/crunchydata/crunchy-postgres-gis:ubi8-14.7-3.2-0' \
             --env 'RELATED_IMAGE_STANDALONE_PGADMIN=registry.developers.crunchydata.com/crunchydata/crunchy-pgadmin4:ubi8-8.6-1' \
             --env 'PGO_FEATURE_GATES=TablespaceVolumes=true' \
@@ -153,7 +153,7 @@ jobs:
           KUTTL_PG_UPGRADE_TO_VERSION: '15'
           KUTTL_PG_VERSION: '14'
           KUTTL_POSTGIS_VERSION: '3.4'
-          KUTTL_PSQL_IMAGE: 'registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-1'
+          KUTTL_PSQL_IMAGE: 'registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.7-0'
       - run: |
           make check-kuttl && exit
           failed=$?
