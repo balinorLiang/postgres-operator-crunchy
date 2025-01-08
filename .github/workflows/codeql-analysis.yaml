@@ -16,8 +16,6 @@ jobs:
       contents: read
       security-events: write
 
-    if: ${{ github.repository == 'CrunchyData/postgres-operator' }}
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
