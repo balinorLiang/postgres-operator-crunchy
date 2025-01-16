@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kubernetes: ['1.23.x']
+        kubernetes: ['1.27.x']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
