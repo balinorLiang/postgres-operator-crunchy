@@ -382,6 +382,9 @@ func populatePGInstanceConfigurationMap(
 	stanza.Set("pg1-path", pgdataDir)
 	stanza.Set("pg1-port", fmt.Sprint(pgPort))
 	stanza.Set("pg1-socket-path", postgres.SocketDirectory)
+	stanza.Set("pg1-database", "postgres")
+	stanza.Set("pg1-host-user", "postgres")
+	stanza.Set("pg1-user", "postgres")
 
 	if fetchKeyCommand != "" {
 		stanza.Set("archive-header-check", "n")
