@@ -264,9 +264,9 @@ func startupCommand(
 		// and so we add the subdirectory `data` in order to set the permissions.
 		checkInstallRecreateCmd := strings.Join([]string{
 			`if [[ ! -e "${tablespace_dir}" || -O "${tablespace_dir}" ]]; then`,
-			`install --directory --mode=0750 "${tablespace_dir}"`,
+			`install --directory --mode=0700 "${tablespace_dir}"`,
 			`elif [[ -w "${tablespace_dir}" && -g "${tablespace_dir}" ]]; then`,
-			`recreate "${tablespace_dir}" '0750'`,
+			`recreate "${tablespace_dir}" '0700'`,
 			`else (halt Permissions!); fi ||`,
 			`halt "$(permissions "${tablespace_dir}" ||:)"`,
 		}, "\n")
@@ -351,14 +351,14 @@ chmod +x /tmp/pg_rewind_tde.sh
 		// When the directory does not exist, create it with the correct permissions.
 		// When the directory has the correct owner, set the correct permissions.
 		`if [[ ! -e "${postgres_data_directory}" || -O "${postgres_data_directory}" ]]; then`,
-		`install --directory --mode=0750 "${postgres_data_directory}"`,
+		`install --directory --mode=0700 "${postgres_data_directory}"`,
 		//
 		// The directory exists but its owner is wrong. When it is writable,
 		// the set-group-ID bit indicates that "fsGroup" probably ran on its
 		// contents making them safe to use. In this case, we can make a new
 		// directory (owned by this user) and refill it.
 		`elif [[ -w "${postgres_data_directory}" && -g "${postgres_data_directory}" ]]; then`,
-		`recreate "${postgres_data_directory}" '0750'`,
+		`recreate "${postgres_data_directory}" '0700'`,
 		//
 		// The directory exists, its owner is wrong, and it is not writable.
 		`else (halt Permissions!); fi ||`,

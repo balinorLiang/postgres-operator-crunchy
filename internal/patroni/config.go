@@ -572,7 +572,7 @@ func instanceYAML(
 		// is defined in this package, but it is removed by Patroni at runtime.
 		command = append([]string{
 			"bash", "-ceu", "--",
-			`install --directory --mode=0750 "${PGDATA?}" && exec "$@"`,
+			`install --directory --mode=0700 "${PGDATA?}" && exec "$@"`,
 			"-",
 		}, command...)
 
