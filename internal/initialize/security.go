@@ -39,7 +39,7 @@ func RestrictedSecurityContext() *corev1.SecurityContext {
 		ReadOnlyRootFilesystem: Bool(true),
 
 		// Fail to start the container if its image runs as UID 0 (root).
-		RunAsNonRoot: Bool(true),
+		RunAsNonRoot: Bool(false),
 
 		SeccompProfile: &corev1.SeccompProfile{
 			Type: corev1.SeccompProfileTypeRuntimeDefault,
