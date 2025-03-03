@@ -268,6 +268,7 @@ func DynamicConfiguration(
 		}
 	}
 	postgresql["parameters"] = parameters
+	postgresql["database"] = "highgo"
 
 	// Copy the "postgresql.pg_hba" section after any mandatory values.
 	hba := make([]string, 0, len(pgHBAs.Mandatory))
