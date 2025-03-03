@@ -15,6 +15,8 @@ import (
 	"github.com/crunchydata/postgres-operator/internal/logging"
 )
 
+const hghactl = "/usr/local/hghac/hac/hghactl/hghactl"
+
 // API defines a general interface for interacting with the Patroni API.
 type API interface {
 	// ChangePrimaryAndWait tries to demote the current Patroni leader. It
@@ -26,7 +28,7 @@ type API interface {
 	ReplaceConfiguration(ctx context.Context, configuration map[string]any) error
 }
 
-// Executor implements API by calling "patronictl".
+// Executor implements API by calling hghactl.
 type Executor func(
 	ctx context.Context, stdin io.Reader, stdout, stderr io.Writer, command ...string,
 ) error
@@ -35,7 +37,7 @@ type Executor func(
 var _ API = Executor(nil)
 
 // ChangePrimaryAndWait tries to demote the current Patroni leader by calling
-// "patronictl". It returns true when an election completes successfully. It
+// hghactl. It returns true when an election completes successfully. It
 // waits up to two "loop_wait" or until an error occurs. When Patroni is paused,
 // next cannot be blank. Similar to the "POST /switchover" REST endpoint.
 func (exec Executor) ChangePrimaryAndWait(
@@ -44,7 +46,7 @@ func (exec Executor) ChangePrimaryAndWait(
 	var stdout, stderr bytes.Buffer
 
 	err := exec(ctx, nil, &stdout, &stderr,
-		"patronictl", "switchover", "--scheduled=now", "--force",
+		hghactl, "switchover", "--scheduled=now", "--force",
 		"--primary="+current, "--candidate="+next)
 
 	log := logging.FromContext(ctx)
@@ -62,7 +64,7 @@ func (exec Executor) ChangePrimaryAndWait(
 }
 
 // SwitchoverAndWait tries to change the current Patroni leader by calling
-// "patronictl". It returns true when an election completes successfully. It
+// hghactl. It returns true when an election completes successfully. It
 // waits up to two "loop_wait" or until an error occurs. When Patroni is paused,
 // next cannot be blank. Similar to the "POST /switchover" REST endpoint.
 // The "patronictl switchover" variant does not require the current primary to be passed
@@ -73,7 +75,7 @@ func (exec Executor) SwitchoverAndWait(
 	var stdout, stderr bytes.Buffer
 
 	err := exec(ctx, nil, &stdout, &stderr,
-		"patronictl", "switchover", "--scheduled=now", "--force",
+		hghactl, "switchover", "--scheduled=now", "--force",
 		"--candidate="+target)
 
 	log := logging.FromContext(ctx)
@@ -93,7 +95,7 @@ func (exec Executor) SwitchoverAndWait(
 }
 
 // FailoverAndWait tries to change the current Patroni leader by calling
-// "patronictl". It returns true when an election completes successfully. It
+// hghactl. It returns true when an election completes successfully. It
 // waits up to two "loop_wait" or until an error occurs. When Patroni is paused,
 // next cannot be blank. Similar to the "POST /switchover" REST endpoint.
 // The "patronictl failover" variant does not require the current primary to be passed
@@ -104,7 +106,7 @@ func (exec Executor) FailoverAndWait(
 	var stdout, stderr bytes.Buffer
 
 	err := exec(ctx, nil, &stdout, &stderr,
-		"patronictl", "failover", "--force",
+		hghactl, "failover", "--force",
 		"--candidate="+target)
 
 	log := logging.FromContext(ctx)
@@ -124,7 +126,7 @@ func (exec Executor) FailoverAndWait(
 }
 
 // ReplaceConfiguration replaces Patroni's entire dynamic configuration by
-// calling "patronictl". Similar to the "POST /switchover" REST endpoint.
+// calling hghactl. Similar to the "POST /switchover" REST endpoint.
 func (exec Executor) ReplaceConfiguration(
 	ctx context.Context, configuration map[string]any,
 ) error {
@@ -133,7 +135,7 @@ func (exec Executor) ReplaceConfiguration(
 	err := json.NewEncoder(&stdin).Encode(configuration)
 	if err == nil {
 		err = exec(ctx, &stdin, &stdout, &stderr,
-			"patronictl", "edit-config", "--replace=-", "--force")
+			hghactl, "edit-config", "--replace=-", "--force")
 
 		log := logging.FromContext(ctx)
 		log.V(1).Info("replaced configuration",
@@ -157,7 +159,7 @@ func (exec Executor) RestartPendingMembers(ctx context.Context, role, scope stri
 	// member has already restarted.
 	// - https://github.com/zalando/patroni/blob/v2.1.1/patroni/ctl.py#L580-L596
 	err := exec(ctx, nil, &stdout, &stderr,
-		"patronictl", "restart", "--pending", "--force", "--role="+role, scope)
+		hghactl, "restart", "--pending", "--force", "--role="+role, scope)
 
 	log := logging.FromContext(ctx)
 	log.V(1).Info("restarted members",
@@ -179,7 +181,7 @@ func (exec Executor) GetTimeline(ctx context.Context) (int64, error) {
 	// with the Patroni HTTP API. It prints the result of calling "GET /cluster"
 	// - https://github.com/zalando/patroni/blob/v2.1.1/patroni/ctl.py#L849
 	err := exec(ctx, nil, &stdout, &stderr,
-		"patronictl", "list", "--format", "json")
+		hghactl, "list", "--format", "json")
 	if err != nil {
 		return 0, err
 	}

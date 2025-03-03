@@ -10,7 +10,7 @@ commands:
 
     pod=$(kubectl get pods -o name -n "${NAMESPACE}" \
       -l postgres-operator.crunchydata.com/cluster=pgbackrest-backup-standby \
-      -l postgres-operator.crunchydata.com/pgbackrest-backup=replica-create)
+      -l postgres-operator.crunchydata.com/pgbackrest-backup=replica-create | head -n 1)
     [ "$pod" = "" ] && retry "Pod not found" && exit 1
 
     logs=$(kubectl logs "${pod}" --namespace "${NAMESPACE}")

@@ -343,7 +343,7 @@ func populatePGInstanceConfigurationMap(
 	stanza := iniMultiSet{}
 
 	// For faster and more robust WAL archiving, we turn on pgBackRest archive-async.
-	global.Set("archive-async", "y")
+	//global.Set("archive-async", "y")
 	// pgBackRest spool-path should always be co-located with the Postgres WAL path.
 	global.Set("spool-path", "/pgdata/pgbackrest-spool")
 	// pgBackRest will log to the pgData volume for commands run on the PostgreSQL instance
@@ -382,6 +382,9 @@ func populatePGInstanceConfigurationMap(
 	stanza.Set("pg1-path", pgdataDir)
 	stanza.Set("pg1-port", fmt.Sprint(pgPort))
 	stanza.Set("pg1-socket-path", postgres.SocketDirectory)
+	stanza.Set("pg1-database", "postgres")
+	stanza.Set("pg1-host-user", "postgres")
+	stanza.Set("pg1-user", "postgres")
 
 	if fetchKeyCommand != "" {
 		stanza.Set("archive-header-check", "n")
