@@ -22,7 +22,7 @@ func NewHBAs() HBAs {
 			// - https://www.postgresql.org/docs/current/warm-standby.html#STREAMING-REPLICATION-AUTHENTICATION
 			NewHBA().TLS().User(ReplicationUser).Method("cert").Replication(),
 			NewHBA().TLS().User(ReplicationUser).Method("cert").Database("highgo"),
-			NewHBA().TCP().User(ReplicationUser).Method("reject"),
+			//NewHBA().TCP().User(ReplicationUser).Method("reject"),
 		},
 
 		Default: []*HostBasedAuthentication{
