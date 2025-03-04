@@ -369,7 +369,7 @@ func populatePGInstanceConfigurationMap(
 			global.Set(repo.Name+"-host-ca-file", certAuthorityAbsolutePath)
 			global.Set(repo.Name+"-host-cert-file", certClientAbsolutePath)
 			global.Set(repo.Name+"-host-key-file", certClientPrivateKeyAbsolutePath)
-			global.Set(repo.Name+"-host-user", "postgres")
+			global.Set(repo.Name+"-host-user", "highgo")
 		}
 	}
 
@@ -382,9 +382,9 @@ func populatePGInstanceConfigurationMap(
 	stanza.Set("pg1-path", pgdataDir)
 	stanza.Set("pg1-port", fmt.Sprint(pgPort))
 	stanza.Set("pg1-socket-path", postgres.SocketDirectory)
-	stanza.Set("pg1-database", "postgres")
-	stanza.Set("pg1-host-user", "postgres")
-	stanza.Set("pg1-user", "postgres")
+	stanza.Set("pg1-database", "highgo")
+	stanza.Set("pg1-host-user", "highgo")
+	stanza.Set("pg1-user", "highgo")
 
 	if fetchKeyCommand != "" {
 		stanza.Set("archive-header-check", "n")
