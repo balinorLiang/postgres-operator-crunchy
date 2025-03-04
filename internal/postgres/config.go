@@ -68,7 +68,8 @@ safelink() (
 
 	// ReplicationUser is the PostgreSQL role that will be created by Patroni
 	// for streaming replication and for `pg_rewind`.
-	ReplicationUser = "_crunchyrepl"
+	// 注意：V9版本可能不会使用highgo用户作为超户，替换成sysdba之类的用户。
+	ReplicationUser = "highgo"
 
 	// configMountPath is where to mount additional config files
 	configMountPath = "/etc/postgres"
