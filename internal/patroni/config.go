@@ -268,6 +268,7 @@ func DynamicConfiguration(
 		}
 	}
 	postgresql["parameters"] = parameters
+	postgresql["database"] = "highgo"
 
 	// Copy the "postgresql.pg_hba" section after any mandatory values.
 	hba := make([]string, 0, len(pgHBAs.Mandatory))
@@ -611,6 +612,17 @@ func instanceYAML(
 				},
 			}
 		} else {
+			encrption := "scram-sha-256"
+			if cluster.Spec.Patroni != nil {
+				if postgresql, ok := cluster.Spec.Patroni.DynamicConfiguration["postgresql"]; ok {
+					root := postgresql.(map[string]interface{})
+					if pwdEncrypt, ok := root["password_encryption"]; ok {
+						if encrypt, ok := pwdEncrypt.(string); ok {
+							encrption = encrypt
+						}
+					}
+				}
+			}
 
 			initdb := []string{
 				// Enable checksums on data pages to help detect corruption of
@@ -628,7 +640,7 @@ func instanceYAML(
 				// - https://www.postgresql.org/docs/current/app-pgchecksums.html
 				"data-checksums",
 				"encoding=UTF8",
-
+				"auth=" + encrption,
 				// NOTE(cbandy): The "--waldir" option was introduced in PostgreSQL v10.
 				"waldir=" + postgres.WALDirectory(cluster, instance),
 			}

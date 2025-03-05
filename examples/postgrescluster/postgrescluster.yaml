@@ -3,33 +3,57 @@ kind: PostgresCluster
 metadata:
   name: hippo
 spec:
-  postgresVersion: 16
+  image: highgo-hgdb-x86-license_hgdboperator_user:v4.5.10-250210
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: service-registry
   instances:
-    - name: instance1
-      dataVolumeClaimSpec:
+    - dataVolumeClaimSpec:
         accessModes:
-        - "ReadWriteOnce"
+          - ReadWriteOnce
         resources:
           requests:
             storage: 1Gi
+        storageClassName: incloud-nfs
+      name: highgo
+      replicas: 1
+  port: 5866
+  postgresVersion: 12
+  users:
+    - name: sysdba
+    - name: syssao
+    - name: syssso
+  service:
+    type: NodePort
+  patroni:
+    patroni:
+    switchover:
+      enabled: true
+
   backups:
     pgbackrest:
+      image: pgbackrest:2.43-ubi8-sm3-hgdboperator-user
+      global:
+        repo1-retention-full: "14"
+        repo1-retention-full-type: time
+      manual:
+        options:
+        - --type=incr
+        - --start-fast=y
+        repoName: repo1
+      restore:
+        enabled: true
+        repoName: repo1
+        options:
+        - --type=time
+        - --target="2024-12-15 22:04:09"
       repos:
-      - name: repo1
-        volume:
-          volumeClaimSpec:
-            accessModes:
-            - "ReadWriteOnce"
-            resources:
-              requests:
-                storage: 1Gi
-      - name: repo2
-        volume:
-          volumeClaimSpec:
-            accessModes:
-            - "ReadWriteOnce"
-            resources:
-              requests:
-                storage: 1Gi
-  proxy:
-    pgBouncer: {}
+        - name: repo1
+          volume:
+            volumeClaimSpec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi
+              storageClassName: incloud-nfs

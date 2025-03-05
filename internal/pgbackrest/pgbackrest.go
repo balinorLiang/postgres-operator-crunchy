@@ -79,7 +79,7 @@ if [[ "$(< /etc/pgbackrest/conf.d/config-hash)" != "${hash}" ]]; then
 elif ! bash -c "${check_repo_cmd}"; then
  	 printf >&2 "%s" "${vol_msg}"; exit 1;
 else
-    pgbackrest stanza-create --stanza="${stanza}" || pgbackrest stanza-upgrade --stanza="${stanza}"
+    pgbackrest stanza-create --pg-version-force=14 --stanza="${stanza}" || pgbackrest stanza-upgrade --stanza="${stanza}"
 fi
 `
 	if err := exec(ctx, nil, &stdout, &stderr, "bash", "-ceu", "--",

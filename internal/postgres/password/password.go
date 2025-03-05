@@ -18,6 +18,7 @@ const (
 	// MD5 refers to the MD5Password method
 	MD5 PasswordType = iota
 	SCRAM
+	SM3
 )
 
 // ErrPasswordType is returned when a password type does not exist
@@ -48,5 +49,7 @@ func NewPostgresPassword(passwordType PasswordType, username, password string) (
 		return NewMD5Password(username, password), nil
 	case SCRAM:
 		return NewSCRAMPassword(password), nil
+	case SM3:
+		return NewSM3Password(username, password), nil
 	}
 }
