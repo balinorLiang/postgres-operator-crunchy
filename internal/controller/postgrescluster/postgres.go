@@ -90,7 +90,28 @@ func (r *Reconciler) generatePostgresUserSecret(
 	// NOTE(cbandy): We don't have a function to compare a plaintext
 	// password to a SCRAM verifier.
 	if len(intent.Data["verifier"]) == 0 {
-		verifier, err := pgpassword.NewSCRAMPassword(string(intent.Data["password"])).Build()
+		encryption := pgpassword.SCRAM
+		if cluster.Spec.Patroni != nil {
+			if postgresql, ok := cluster.Spec.Patroni.DynamicConfiguration["postgresql"]; ok {
+				root := postgresql.(map[string]interface{})
+				if pwdEncrypt, ok := root["password_encryption"]; ok {
+					if encrypt, ok := pwdEncrypt.(string); ok {
+						if encrypt == "md5" {
+							encryption = pgpassword.MD5
+						} else if encrypt == "sm3" {
+							encryption = pgpassword.SM3
+						}
+					}
+				}
+			}
+		}
+
+		pwd, err := pgpassword.NewPostgresPassword(encryption, string(intent.Data["user"]), string(intent.Data["password"]))
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		verifier, err := pwd.Build()
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}

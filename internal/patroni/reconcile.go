@@ -105,7 +105,8 @@ func InstancePod(ctx context.Context,
 		}
 	}
 
-	container.Command = []string{"patroni", configDirectory}
+	//container.Command = []string{"patroni", configDirectory}
+	container.Command = []string{"/usr/local/hghac/hac/hghac/hghac", configDirectory}
 
 	container.Env = append(container.Env,
 		instanceEnvironment(inCluster, inClusterPodService, inPatroniLeaderService,

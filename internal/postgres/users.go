@@ -96,10 +96,10 @@ CREATE TEMPORARY TABLE input (id serial, data json);
 
 		// The "postgres" user must always be a superuser that can login to
 		// the "postgres" database.
-		if spec.Name == "postgres" {
-			databases = append(databases[:0:0], "postgres")
-			options = `LOGIN SUPERUSER`
-		}
+		//if spec.Name == "postgres" {
+		//	databases = append(databases[:0:0], "postgres")
+		//	options = `LOGIN SUPERUSER`
+		//}
 
 		if err == nil {
 			err = encoder.Encode(map[string]any{
@@ -157,7 +157,6 @@ SELECT pg_catalog.format('GRANT ALL PRIVILEGES ON DATABASE %I TO %I',
 
 	// Commit (finish) the transaction.
 	_, _ = sql.WriteString(`COMMIT;`)
-
 	stdout, stderr, err := exec.Exec(ctx, &sql,
 		map[string]string{
 			"ON_ERROR_STOP": "on", // Abort when any one statement fails.

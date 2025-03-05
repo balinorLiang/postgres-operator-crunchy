@@ -30,7 +30,7 @@ func PostgreSQL(
 	// - https://www.postgresql.org/docs/current/runtime-config-wal.html
 	outParameters.Mandatory.Add("archive_mode", "on")
 	if backupsEnabled {
-		archive := `pgbackrest --stanza=` + DefaultStanzaName + ` archive-push "%p"`
+		archive := `pgbackrest --archive-header-check=n --stanza=` + DefaultStanzaName + ` archive-push "%p"`
 		outParameters.Mandatory.Add("archive_command", archive)
 	} else {
 		// If backups are disabled, keep archive_mode on (to avoid a Postgres restart)
